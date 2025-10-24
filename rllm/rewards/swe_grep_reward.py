@@ -159,7 +159,11 @@ class RewardSWEGrepFn:
             predict = json.loads(action[action.find("["): action.rfind("]") + 1])
             results = MULocBenchEvaluator().evaluate_single_issue(ground_truth, predict)
 
-            reward = (results["file"] + results["class"] + results["function"]) / 3
+            reward = (
+                results["file"]["f1"] +
+                results["class"]["f1"] +
+                results["function"]["f1"]
+            ) / 3.0
 
             return RewardOutput(reward=reward)
 

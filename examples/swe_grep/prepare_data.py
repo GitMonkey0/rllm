@@ -1,25 +1,24 @@
 import json
 import os
 import argparse
-from rllm.data.dataset import DatasetRegistry
+import pandas as pd
 
 
-def prepare_open_swe_grep_data(repo_base_path, train_json_path, train_size=None, test_size=None):
+def prepare_open_swe_grep_data(repo_base_path, train_json_path, train_size=None, output_path=None):
     """
-    Loading Open-SWE-Grep dataset and registering it with the DatasetRegistry.
+    Load and process Open-SWE-Grep dataset, optionally save as Parquet.
 
     Args:
         repo_base_path: Base path for repositories
         train_json_path: Path to the training JSON file
-        train_size: Maximum number of training examples to load
-        test_size: Maximum number of test examples to load
+        train_size: Max number of examples to load
+        output_path: Path to save .parquet file (e.g., 'open_swe_grep_train.parquet')
 
     Returns:
-        Dataset instance
+        pd.DataFrame: Processed dataset
     """
 
     def process_split(json_path, max_size, split_name):
-        """Process a data split with optional size limit"""
         with open(json_path, 'r', encoding='utf-8') as f:
             raw_data = json.load(f)
 
@@ -31,23 +30,22 @@ def prepare_open_swe_grep_data(repo_base_path, train_json_path, train_size=None,
             repo_suffix = f"{example['organization']}_{example['repo_name']}_{example['base_commit']}"
             repo_path = os.path.join(repo_base_path, repo_suffix)
 
+            # Keep file_loc as list (Parquet handles list of strings)
             file_loc = example.get("file_loc", [])
-            file_loc_str = json.dumps(file_loc) if file_loc else "[]"
 
             data = {
                 "data_source": "open_swe_grep",
-                "prompt": [{"role": "user", "content": example["question"]}],
+                "prompt": example["question"],  # Simplify: store just the string
                 "ability": "swe",
-                "reward_model": {"style": "rule", "ground_truth": ""},
-                "extra_info": {
-                    "split": split_name,
-                    "index": idx,
-                    "organization": example["organization"],
-                    "repo_name": example["repo_name"],
-                    "base_commit": example["base_commit"],
-                    "repo_path": repo_path,
-                    "file_loc": file_loc_str
-                }
+                "reward_model_style": "rule",
+                "reward_model_ground_truth": "",
+                "split": split_name,
+                "index": idx,
+                "organization": example["organization"],
+                "repo_name": example["repo_name"],
+                "base_commit": example["base_commit"],
+                "repo_path": repo_path,
+                "file_loc": file_loc  
             }
             processed.append(data)
 
@@ -55,21 +53,36 @@ def prepare_open_swe_grep_data(repo_base_path, train_json_path, train_size=None,
         return processed
 
     print("Loading Open-SWE-Grep dataset...")
-
     train_processed = process_split(train_json_path, train_size, "train")
 
-    print(train_processed[0])
-    train_dataset = DatasetRegistry.register_dataset("open_swe_grep", train_processed, "train")
+    # Convert to DataFrame
+    df = pd.DataFrame(train_processed)
 
-    return train_dataset.get_data()
+    # Optional: Save as Parquet
+    if output_path:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        df.to_parquet(output_path, engine='pyarrow', index=False)
+        print(f"Saved processed data to {output_path}")
+
+    return df
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Prepare Open-SWE-Grep dataset")
+    parser = argparse.ArgumentParser(description="Prepare Open-SWE-Grep dataset and save as Parquet")
     parser.add_argument("--repo_base", required=True, help="Base path for repositories")
     parser.add_argument("--train_json", required=True, help="Path to the training JSON file")
+    parser.add_argument("--output", default="open_swe_grep_train.parquet", help="Output Parquet file path")
+    parser.add_argument("--train_size", type=int, default=None, help="Max number of training examples")
     args = parser.parse_args()
 
-    train_dataset = prepare_open_swe_grep_data(args.repo_base, args.train_json)
-    print(f"Train dataset first example: {train_dataset[0]}")
-    print(f"Repo path: {train_dataset[0]['extra_info']['repo_path']}")
+    train_df = prepare_open_swe_grep_data(
+        repo_base_path=args.repo_base,
+        train_json_path=args.train_json,
+        train_size=args.train_size,
+        output_path=args.output
+    )
+
+    print("\nFirst example:")
+    print(train_df.iloc[0].to_dict())
+    print(f"\nRepo path: {train_df.iloc[0]['repo_path']}")
+    print(f"\nSaved Parquet file has {len(train_df)} rows.")
