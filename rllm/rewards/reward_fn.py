@@ -5,6 +5,7 @@ from rllm.rewards.code_reward import RewardCodeFn
 from rllm.rewards.math_reward import RewardMathFn
 from rllm.rewards.reward_types import RewardConfig, RewardInput, RewardOutput
 from rllm.rewards.search_reward import RewardSearchFn
+from rllm.rewards.swe_grep_reward import RewardSWEGrepFn
 
 
 @runtime_checkable
@@ -94,6 +95,15 @@ def code_reward_fn(task_info: dict, action: str) -> RewardOutput:
     """
     reward_config = RewardConfig()
     reward_fn = RewardCodeFn(reward_config)
+    if isinstance(action, Action):
+        action = action.action
+    return reward_fn(task_info, action)
+
+def swe_grep_reward_fn(task_info: dict, action: str) -> RewardOutput:
+    """
+    """
+    reward_config = RewardConfig()
+    reward_fn = RewardSWEGrepFn(reward_config)
     if isinstance(action, Action):
         action = action.action
     return reward_fn(task_info, action)
