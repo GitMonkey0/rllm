@@ -10,7 +10,7 @@ from rllm.tools.repo_tools import FindFilesTool, ListDirectoryTool, ParseASTTool
 
 @hydra.main(config_path="pkg://rllm.trainer.config", config_name="agent_ppo_trainer", version_base=None)
 def main(config):
-    train_dataset = load_dataset("parquet", data_files=config.data.train_path)["train"]
+    # train_dataset = load_dataset("parquet", data_files=config.data.train_path)["train"]
 
     tool_map = {"find_files": FindFilesTool, "list_directory": ListDirectoryTool, "parse_ast": ParseASTTool, "read_file": ReadFileTool, "search_files": SearchFilesTool}
 
@@ -27,7 +27,7 @@ def main(config):
         agent_class=ToolAgent,
         env_class=SWEGrepEnvironment,
         config=config,
-        train_dataset=train_dataset,
+        # train_dataset=train_dataset,
         agent_args=agent_args,
         env_args=env_args,
     )

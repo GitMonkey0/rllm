@@ -167,6 +167,8 @@ class AgentPPOTrainer(RayPPOTrainer):
                 batch.pop(batch_keys=["input_ids", "attention_mask", "position_ids"])
 
                 with marked_timer("step", timing_raw):
+                    print(batch.batch["input_ids"].shape)
+                    a
                     self.init_envs_and_agents(batch)
 
                     if self.config.rllm.stepwise_advantage.enable:

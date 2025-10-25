@@ -39,8 +39,8 @@ class ListDirectoryTool(Tool):
     def forward(  
         self,  
         path: str = ".",  
-        repo_path: str,  
         depth: int = 2,  
+        repo_path: str = "",  
         **kwargs  
     ) -> ToolOutput:  
         try:  
@@ -59,7 +59,7 @@ class ListDirectoryTool(Tool):
               
             for item in target.rglob('*'):  
                 try:  
-                    rel = item.relative_to(root_path)  
+                    rel = item.relative_to(repo_path)  
                 except ValueError:  
                     continue  
                   

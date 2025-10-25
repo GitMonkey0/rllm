@@ -31,8 +31,8 @@ def prepare_open_swe_grep_data(repo_base_path, train_json_path, train_size=None,
             repo_path = os.path.join(repo_base_path, repo_suffix)
 
             # Keep file_loc as list (Parquet handles list of strings)
-            file_loc = example.get("file_loc", [])
-
+            file_loc = example.get("file_loc")
+            file_loc = json.dumps(file_loc, ensure_ascii=False)
             data = {
                 "data_source": "open_swe_grep",
                 "prompt": example["question"],  # Simplify: store just the string
