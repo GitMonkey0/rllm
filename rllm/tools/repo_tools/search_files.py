@@ -6,12 +6,13 @@ from rllm.tools.tool_base import Tool, ToolOutput
   
   
 class SearchFilesTool(Tool):  
-      
-    def __init__(self, max_search_results: int = 100):  
-        self.max_search_results = max_search_results  
+    NAME = "search_files"
+    DESCRIPTION = "Search for keywords or regex in file contents across the repository."
+    def __init__(self, name: str = NAME, description: str = DESCRIPTION):  
+        self.max_search_results = 100  
         super().__init__(  
-            name="search_files",  
-            description="Search for keywords or regex in file contents across the repository."  
+            name=name,  
+            description=description  
         )  
       
     @property  

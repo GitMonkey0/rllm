@@ -3,13 +3,14 @@ from rllm.tools.tool_base import Tool, ToolOutput
   
   
 class ListDirectoryTool(Tool):  
-      
-    def __init__(self, max_search_results: int = 100, max_directory_depth: int = 3):  
-        self.max_search_results = max_search_results  
-        self.max_directory_depth = max_directory_depth  
+    NAME = "list_directory"
+    DESCRIPTION = "List directory contents with optional depth control. Returns relative paths of files and directories."
+    def __init__(self, name: str = NAME, description: str = DESCRIPTION):  
+        self.max_search_results = 100  
+        self.max_directory_depth = 3  
         super().__init__(  
-            name="list_directory",  
-            description="List directory contents with optional depth control. Returns relative paths of files and directories."  
+            name=name,  
+            description=description  
         )  
       
     @property  

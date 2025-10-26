@@ -3,11 +3,13 @@ from pathlib import Path
 from rllm.tools.tool_base import Tool, ToolOutput  
   
 class ReadFileTool(Tool):  
-    def __init__(self, max_lines_per_read: int = 500):  
-        self.max_lines_per_read = max_lines_per_read  
+    NAME = "read_file"
+    DESCRIPTION = "Safely read a portion of a text file (with line range limit)."
+    def __init__(self, name: str = NAME, description: str = DESCRIPTION):  
+        self.max_lines_per_read = 500  
         super().__init__(  
-            name="read_file",  
-            description="Safely read a portion of a text file (with line range limit)."  
+            name=name,  
+            description=description,  
         )  
       
     @property  

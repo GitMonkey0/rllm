@@ -35,17 +35,19 @@ def prepare_open_swe_grep_data(repo_base_path, train_json_path, train_size=None,
             file_loc = json.dumps(file_loc, ensure_ascii=False)
             data = {
                 "data_source": "open_swe_grep",
-                "prompt": example["question"],  # Simplify: store just the string
+                "prompt": [{"role": "user", "content": ""}],  # Simplify: store just the string
                 "ability": "swe",
-                "reward_model_style": "rule",
-                "reward_model_ground_truth": "",
-                "split": split_name,
-                "index": idx,
-                "organization": example["organization"],
-                "repo_name": example["repo_name"],
-                "base_commit": example["base_commit"],
-                "repo_path": repo_path,
-                "file_loc": file_loc  
+                "reward_model": {"style": "rule", "ground_truth": ""},
+                "extra_info": {
+                    "question": example["question"],
+                    "split": split_name,
+                    "index": idx,
+                    "organization": example["organization"],
+                    "repo_name": example["repo_name"],
+                    "base_commit": example["base_commit"],
+                    "repo_path": repo_path,
+                    "file_loc": file_loc  
+                }
             }
             processed.append(data)
 
@@ -81,8 +83,3 @@ if __name__ == "__main__":
         train_size=args.train_size,
         output_path=args.output
     )
-
-    print("\nFirst example:")
-    print(train_df.iloc[0].to_dict())
-    print(f"\nRepo path: {train_df.iloc[0]['repo_path']}")
-    print(f"\nSaved Parquet file has {len(train_df)} rows.")

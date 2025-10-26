@@ -38,12 +38,13 @@ def iter_all_symbols(content: str) -> Iterator[Tuple[Line, Name, Sig, Kind, Scop
             yield node.lineno, node.name, sig, "class", ""
   
 class ParseASTTool(Tool):  
-      
-    def __init__(self, max_ast_results: int = 50):  
-        self.max_ast_results = max_ast_results  
+    NAME = "parse_ast"
+    DESCRIPTION = "Parse a Python file and return AST index."
+    def __init__(self, name: str = NAME, description: str = DESCRIPTION):  
+        self.max_ast_results = 50  
         super().__init__(  
-            name="parse_ast",  
-            description="Parse a Python file and return AST index."  
+            name=name,  
+            description=description
         )  
       
     @property  

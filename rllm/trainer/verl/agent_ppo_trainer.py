@@ -167,10 +167,7 @@ class AgentPPOTrainer(RayPPOTrainer):
                 batch.pop(batch_keys=["input_ids", "attention_mask", "position_ids"])
 
                 with marked_timer("step", timing_raw):
-                    print(batch.batch["input_ids"].shape)
-                    a
                     self.init_envs_and_agents(batch)
-
                     if self.config.rllm.stepwise_advantage.enable:
                         final_gen_batch_output = self.generate_agent_steps(timing_raw=timing_raw, meta_info=batch.meta_info, uids=batch.non_tensor_batch["uid"])
                         repeat_counts = final_gen_batch_output.meta_info["repeat_counts"]

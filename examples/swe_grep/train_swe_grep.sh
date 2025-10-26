@@ -12,10 +12,11 @@ RLLM_DIR=$(python3 -c "import rllm; import os; print(os.path.dirname(os.path.dir
 python3 -m examples.swe_grep.train_swe_grep \
     algorithm.adv_estimator=rloo \
     data.train_files=/mnt/hdfs/luhaotian/data/open_swe_grep/open_swe_grep_train.parquet \
+    data.val_files=/mnt/hdfs/luhaotian/data/open_swe_grep/open_swe_grep_train.parquet \
     data.train_batch_size=64 \
-    data.max_prompt_length=2048 \
+    data.max_prompt_length=4096 \
     data.max_response_length=65536 \
-    actor_rollout_ref.model.path=/mnt/hdfs/luhaotian/ckpt/Qwen3-4B \
+    actor_rollout_ref.model.path=/mnt/hdfs/luhaotian/ckpt/Qwen3-Coder-30B-A3B-Instruct \
     actor_rollout_ref.hybrid_engine=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
@@ -53,6 +54,7 @@ python3 -m examples.swe_grep.train_swe_grep \
     trainer.project_name='open-swe-grep' \
     trainer.experiment_name='test' \
     trainer.val_before_train=False \
+    trainer.test_freq=-1 \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes=1 \
     trainer.save_freq=15 \
