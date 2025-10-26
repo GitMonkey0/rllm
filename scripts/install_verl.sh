@@ -24,8 +24,9 @@ pip install https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.
 # Install flashinfer-0.2.2.post1+cu124 (cxx11abi=False)
 # vllm-0.8.3 does not support flashinfer>=0.2.3
 # see https://github.com/vllm-project/vllm/pull/15777
-wget -nv https://github.com/flashinfer-ai/flashinfer/releases/download/v0.2.2.post1/flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl && \
-    pip install --no-cache-dir flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl
+pip install https://github.com/flashinfer-ai/flashinfer/releases/download/v0.2.2.post1/flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl
+# wget -nv https://github.com/flashinfer-ai/flashinfer/releases/download/v0.2.2.post1/flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl && \
+#     pip install --no-cache-dir flashinfer_python-0.2.2.post1+cu124torch2.6-cp38-abi3-linux_x86_64.whl
 
 
 echo "4. May need to fix opencv"
