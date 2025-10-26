@@ -15,7 +15,7 @@ python3 -m examples.swe_grep.train_swe_grep \
     data.val_files=/mnt/hdfs/luhaotian/data/open_swe_grep/open_swe_grep_train.parquet \
     data.train_batch_size=64 \
     data.max_prompt_length=4096 \
-    data.max_response_length=65536 \
+    data.max_response_length=40960 \
     actor_rollout_ref.model.path=/mnt/hdfs/luhaotian/ckpt/Qwen3-8B \
     actor_rollout_ref.hybrid_engine=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
@@ -50,7 +50,7 @@ python3 -m examples.swe_grep.train_swe_grep \
     algorithm.kl_ctrl.kl_coef=0.001 \
     rllm.mask_truncated_samples=False \
     trainer.critic_warmup=0 \
-    trainer.logger=['console'] \
+    trainer.logger=['console','wandb'] \
     trainer.project_name='open-swe-grep' \
     trainer.experiment_name='test' \
     trainer.val_before_train=False \
