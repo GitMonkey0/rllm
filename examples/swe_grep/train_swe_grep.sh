@@ -16,7 +16,7 @@ python3 -m examples.swe_grep.train_swe_grep \
     data.train_batch_size=64 \
     data.max_prompt_length=4096 \
     data.max_response_length=40960 \
-    actor_rollout_ref.model.path=/mnt/hdfs/luhaotian/ckpt/Qwen3-8B \
+    actor_rollout_ref.model.path=/mnt/bn/douyin-ai4se-general-wl/model/Qwen3-8B \
     actor_rollout_ref.hybrid_engine=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
