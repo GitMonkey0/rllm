@@ -43,36 +43,32 @@ class FindFilesTool(Tool):
         }  
       
     def forward(  
-        self,  
-        pattern: str,  
-        repo_path: str,  
-        use_regex: bool = False,  
-        max_results: int = 30,  
+        self,   
+        pattern: str,   
+        repo_path: str = "",  
+        use_regex: bool = False,   
+        max_results: int = 30,   
         **kwargs  
     ) -> ToolOutput:  
-        """  
-        """  
         try:  
             max_results = min(max_results, self.max_search_results)  
-              
-            root_path = Path(repo_path)  
+            root_path = Path(repo_path) if repo_path else Path(".") 
+            
             if not root_path.exists() or not root_path.is_dir():  
                 return ToolOutput(  
                     name=self.name,  
                     error="Repository path does not exist or is not a directory"  
                 )  
-              
+            
             result = []  
-              
             for file_path in root_path.rglob('*'):  
                 if not file_path.is_file():  
                     continue  
-                  
                 try:  
                     rel_str = str(file_path.relative_to(root_path))  
                 except ValueError:  
                     continue  
-                  
+                
                 matched = False  
                 if use_regex:  
                     try:  
@@ -81,12 +77,13 @@ class FindFilesTool(Tool):
                         matched = False  
                 else:  
                     matched = fnmatch.fnmatch(rel_str, pattern)  
-                  
+                
                 if matched:  
                     result.append(rel_str)  
-                    if len(result) >= max_results:  
-                        break  
-              
+                
+                if len(result) >= max_results:  
+                    break  
+            
             return ToolOutput(  
                 name=self.name,  
                 output={  
@@ -95,7 +92,6 @@ class FindFilesTool(Tool):
                     "truncated": len(result) >= max_results  
                 }  
             )  
-              
         except Exception as e:  
             return ToolOutput(  
                 name=self.name,  

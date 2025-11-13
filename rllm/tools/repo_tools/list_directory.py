@@ -38,44 +38,45 @@ class ListDirectoryTool(Tool):
         }  
       
     def forward(  
-        self,  
-        path: str = ".",  
-        depth: int = 2,  
-        repo_path: str = "",  
+        self,   
+        path: str = ".",   
+        depth: int = 2,   
+        repo_path: str = "",   
         **kwargs  
     ) -> ToolOutput:  
         try:  
             depth = min(depth, self.max_directory_depth)  
-              
-            target = path  
-              
+            
+            root_path = Path(repo_path) if repo_path else Path(".")  
+            target = root_path / path  
+            
             if not target.exists():  
                 return ToolOutput(  
                     name=self.name,  
                     error="Path not found"  
                 )  
-              
+            
             result = []  
-            start_parts = Path(path).parts  
-              
+            start_parts = len(Path(path).parts) if path != "." else 0  
+            
             for item in target.rglob('*'):  
                 try:  
-                    rel = item.relative_to(repo_path)  
+                    rel = item.relative_to(root_path)  
                 except ValueError:  
                     continue  
-                  
-                current_depth = len(rel.parts) - len(start_parts)  
+                
+                current_depth = len(rel.parts) - start_parts  
                 if current_depth > depth:  
                     continue  
-                  
+                
                 suffix = '/' if item.is_dir() else ''  
                 result.append(str(rel) + suffix)  
-                  
+                
                 if len(result) >= self.max_search_results:  
                     break  
-              
+            
             result = sorted(result[:self.max_search_results])  
-              
+            
             return ToolOutput(  
                 name=self.name,  
                 output={  
@@ -84,7 +85,6 @@ class ListDirectoryTool(Tool):
                     "truncated": len(result) >= self.max_search_results  
                 }  
             )  
-              
         except Exception as e:  
             return ToolOutput(  
                 name=self.name,  

@@ -71,15 +71,15 @@ class ParseASTTool(Tool):
         return name.split(".", 1)[0]   
       
     def forward(  
-        self,  
-        path: str,  
-        repo_path: str,  
+        self,   
+        path: str,   
+        repo_path: str = "",  
         **kwargs  
     ) -> ToolOutput:  
         try:  
-            root_path = Path(repo_path)  
+            root_path = Path(repo_path) if repo_path else Path(".")  
             full_path = root_path / path  
-              
+            
             if full_path.suffix.lower() != ".py":  
                 return ToolOutput(  
                     name=self.name,  

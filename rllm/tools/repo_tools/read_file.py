@@ -43,16 +43,16 @@ class ReadFileTool(Tool):
     def forward(  
         self,   
         path: str,   
-        repo_path: str,  
-        start_line: int = 0,  
-        end_line: int = 200,  
+        repo_path: str = "", 
+        start_line: int = 0,   
+        end_line: int = 200,   
         **kwargs  
     ) -> ToolOutput:  
         try:  
             end_line = min(end_line, start_line + self.max_lines_per_read)  
-            root_path = Path(repo_path)  
+            root_path = Path(repo_path) if repo_path else Path(".")  
             full_path = root_path / path  
-              
+            
             if not full_path.is_file():  
                 return ToolOutput(  
                     name=self.name,  

@@ -102,18 +102,18 @@ class SearchFilesTool(Tool):
         return matches  
       
     def forward(  
-        self,  
-        pattern: str,  
-        repo_path: str,  
-        file_pattern: str = "*",  
-        use_regex: bool = False,  
-        max_results: int = 30,  
+        self,   
+        pattern: str,   
+        repo_path: str = "",  
+        file_pattern: str = "*",   
+        use_regex: bool = False,   
+        max_results: int = 30,   
         **kwargs  
     ) -> ToolOutput:  
         try:  
             max_results = min(max_results, self.max_search_results)  
-              
-            root_path = Path(repo_path)  
+            root_path = Path(repo_path) if repo_path else Path(".")  
+            
             if not root_path.exists() or not root_path.is_dir():  
                 return ToolOutput(  
                     name=self.name,  
