@@ -181,7 +181,8 @@ class AgentPPOTrainer(RayPPOTrainer):
                         final_gen_batch_output, generate_metrics = self.generate_agent_trajectory(timing_raw=timing_raw, meta_info=batch.meta_info)
                         batch = batch.union(final_gen_batch_output)
                         metrics.update(generate_metrics)
-                    print(self.tokenizer.decode(batch.batch["input_ids"][0], skip_special_tokens=False))
+                    for i in range(10):
+                        print(self.tokenizer.decode(batch.batch["input_ids"][i]))
                     # compute values
                     if self.use_critic:
                         with marked_timer("values", timing_raw):
