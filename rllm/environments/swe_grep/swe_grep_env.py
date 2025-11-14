@@ -18,7 +18,7 @@ class SWEGrepEnvironment(ToolEnvironment):
               
             if repo_path:  
                 tool_args["repo_path"] = repo_path  
-              
+            print(repo_path)
             tool_output = self.tools(tool_name=tool_name, **tool_args)  
             tool_output_str = tool_output.to_string()  
             output_queue.put((tool_call["id"], tool_output_str))  
