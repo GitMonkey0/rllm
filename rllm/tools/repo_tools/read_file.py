@@ -43,7 +43,7 @@ class ReadFileTool(Tool):
     def forward(  
         self,   
         path: str,   
-        repo_path: str = "", 
+        repo_path: str, 
         start_line: int = 0,   
         end_line: int = 200,   
         **kwargs  

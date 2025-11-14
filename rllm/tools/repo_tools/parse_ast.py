@@ -73,7 +73,7 @@ class ParseASTTool(Tool):
     def forward(  
         self,   
         path: str,   
-        repo_path: str = "",  
+        repo_path: str,  
         **kwargs  
     ) -> ToolOutput:  
         try:  

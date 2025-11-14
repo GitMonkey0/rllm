@@ -39,9 +39,9 @@ class ListDirectoryTool(Tool):
       
     def forward(  
         self,   
+        repo_path: str,  
         path: str = ".",   
-        depth: int = 2,   
-        repo_path: str = "",   
+        depth: int = 2,  
         **kwargs  
     ) -> ToolOutput:  
         try:  

@@ -6,7 +6,7 @@ import threading
   
 class SWEGrepEnvironment(ToolEnvironment):  
     def _execute_tool_calls(self, tool_calls):  
-        repo_path = self.task.get("repo_path", "") if self.task else ""  
+        repo_path = self.task.get("repo_path", None) if self.task else None 
           
         tool_outputs = {}  
         output_queue = queue.Queue()  
@@ -16,7 +16,7 @@ class SWEGrepEnvironment(ToolEnvironment):
             tool_name = tool_call["function"]["name"]  
             tool_args = json.loads(tool_call["function"]["arguments"])  
               
-            if repo_path:  
+            if repo_path is not None:  
                 tool_args["repo_path"] = repo_path  
             
             tool_output = self.tools(tool_name=tool_name, **tool_args)  

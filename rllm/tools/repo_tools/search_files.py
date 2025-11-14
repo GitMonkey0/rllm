@@ -104,7 +104,7 @@ class SearchFilesTool(Tool):
     def forward(  
         self,   
         pattern: str,   
-        repo_path: str = "",  
+        repo_path: str,  
         file_pattern: str = "*",   
         use_regex: bool = False,   
         max_results: int = 30,   

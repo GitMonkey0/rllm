@@ -11,19 +11,19 @@ RLLM_DIR=$(python3 -c "import rllm; import os; print(os.path.dirname(os.path.dir
 # Run the training script with the specified configuration
 python3 -m examples.swe_grep.train_swe_grep \
     algorithm.adv_estimator=rloo \
-    data.train_files=/mnt/hdfs/luhaotian/data/open_swe_grep/open_swe_grep_train.parquet \
-    data.val_files=/mnt/hdfs/luhaotian/data/open_swe_grep/open_swe_grep_train.parquet \
+    data.train_files=/mnt/bn/douyin-ai4se-general-wl/lht/project/Open-SWE-Grep/data/open_swe_grep_train.parquet \
+    data.val_files=/mnt/bn/douyin-ai4se-general-wl/lht/project/Open-SWE-Grep/data/open_swe_grep_train.parquet \
     data.train_batch_size=64 \
     data.max_prompt_length=4096 \
-    data.max_response_length=40960 \
-    actor_rollout_ref.model.path=/mnt/bn/douyin-ai4se-general-wl/model/Qwen3-8B \
+    data.max_response_length=36864 \
+    actor_rollout_ref.model.path=/mnt/bn/douyin-ai4se-general-wl/model/Qwen3-8B-Base \
     actor_rollout_ref.hybrid_engine=True \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.loss_agg_mode=seq-mean-token-sum \
     actor_rollout_ref.actor.ppo_mini_batch_size=32 \
     actor_rollout_ref.actor.use_dynamic_bsz=True \
-    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=24000 \
+    actor_rollout_ref.actor.ppo_max_token_len_per_gpu=40960 \
     actor_rollout_ref.actor.use_kl_loss=False \
     actor_rollout_ref.actor.clip_ratio_high=0.28 \
     actor_rollout_ref.actor.kl_loss_coef=0.001 \

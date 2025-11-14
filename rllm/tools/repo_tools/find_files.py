@@ -45,7 +45,7 @@ class FindFilesTool(Tool):
     def forward(  
         self,   
         pattern: str,   
-        repo_path: str = "",  
+        repo_path: str,  
         use_regex: bool = False,   
         max_results: int = 30,   
         **kwargs  
