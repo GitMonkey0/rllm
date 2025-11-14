@@ -375,6 +375,11 @@ class AgentExecutionEngine:
         # Aggregate final trajectory statistics
         compute_trajectory_reward(trajectory)
         compute_mc_return(trajectory, gamma=self.gamma)
+        if idx % 100 == 0:
+            print(f"=== Trajectory {idx} Complete ===")  
+            print(f"Total reward: {trajectory.reward}")  
+            for i, step in enumerate(trajectory.steps):  
+                print(f"Step {i}: action={step.action}, reward={step.reward}, done={step.done}")
 
         if mode == "Text":
             return trajectory
