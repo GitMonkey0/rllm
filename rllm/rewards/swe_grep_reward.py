@@ -154,7 +154,7 @@ class RewardSWEGrepFn:
         ground_truth = json.loads(task_info["file_loc"])
         if ground_truth is None:
             return RewardOutput(reward=self.config.unk_error_reward, is_correct=False)
-
+        
         try:
             predict = json.loads(action[action.find("["): action.rfind("]") + 1])
             results = MULocBenchEvaluator().evaluate_single_issue(ground_truth, predict)
@@ -168,4 +168,5 @@ class RewardSWEGrepFn:
             return RewardOutput(reward=reward)
 
         except:
+            print(f"ground_truth: {ground_truth}\npredict: {predict}\n")
             return RewardOutput(reward=0.0)
