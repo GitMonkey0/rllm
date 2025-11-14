@@ -102,7 +102,6 @@ def code_reward_fn(task_info: dict, action: str) -> RewardOutput:
 def swe_grep_reward_fn(task_info: dict, action: str) -> RewardOutput:
     """
     """
-    print(f"Task info: {task_info}\nAction: {action}\n")
     reward_config = RewardConfig()
     reward_fn = RewardSWEGrepFn(reward_config)
     if isinstance(action, Action):
