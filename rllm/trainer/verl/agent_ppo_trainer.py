@@ -627,7 +627,7 @@ class AgentPPOTrainer(RayPPOTrainer):
                 
                 for i, traj in enumerate(group_trajectories):  
                     original_reward = traj["trajectory_reward"]  
-                    traj["trajectory_reward"] = original_reward * (1 - normalized_times[i])
+                    traj["trajectory_reward"] = original_reward - 0.1 * normalized_times[i]
 
         for traj in trajectories:
             prompt_tokens = traj["prompt_tokens"]
