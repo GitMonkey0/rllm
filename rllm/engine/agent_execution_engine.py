@@ -212,6 +212,7 @@ class AgentExecutionEngine:
             agent.reset()
             raise Exception(f"Trajectory {idx}: initial prompt length {prompt_token_len} already exceeded max_prompt_length {self.max_prompt_length}, retrying")
 
+        total_tool_calls = 0
         for step_idx in range(self.max_steps):
             # Get action from agent
             prompt_messages = agent.chat_completions.copy()
@@ -246,7 +247,8 @@ class AgentExecutionEngine:
             # Update agent with model response
             action: Action = agent.update_from_model(response)
             action = action.action
-
+            if isinstance(action, list):  
+                total_tool_calls += len(action)
             # Take step in environment using the executor
             start_time = time.time()
 
@@ -397,6 +399,8 @@ class AgentExecutionEngine:
                     "llm_time": llm_time,
                     # Total time spent in the trajectory
                     "total_time": total_time,
+                    # Total number of tool calls
+                    "total_tool_calls": total_tool_calls,
                 },
             }
             return token_result
