@@ -613,21 +613,21 @@ class AgentPPOTrainer(RayPPOTrainer):
             for group_start in range(0, len(trajectories), n):  
                 group_end = min(group_start + n, len(trajectories))  
                 group_trajectories = trajectories[group_start:group_end]  
+
+                response_token_counts = [traj["response_tokens"].numel() for traj in group_trajectories]    
                 
-                total_times = [traj["metrics"]["total_time"] for traj in group_trajectories]  
+                min_tokens = min(response_token_counts)    
+                max_tokens = max(response_token_counts)    
                 
-                min_time = min(total_times)  
-                max_time = max(total_times)  
+                token_range = max_tokens - min_tokens    
+                if token_range == 0:    
+                    normalized_token_counts = [0.0] * len(response_token_counts)    
+                else:    
+                    normalized_token_counts = [(t - min_tokens) / token_range for t in response_token_counts]    
                 
-                time_range = max_time - min_time  
-                if time_range == 0:  
-                    normalized_times = [0.0] * len(total_times)  
-                else:  
-                    normalized_times = [(t - min_time) / time_range for t in total_times]  
-                
-                for i, traj in enumerate(group_trajectories):  
-                    original_reward = traj["trajectory_reward"]  
-                    traj["trajectory_reward"] = original_reward - 0.1 * normalized_times[i]
+                for i, traj in enumerate(group_trajectories):    
+                    original_reward = traj["trajectory_reward"]    
+                    traj["trajectory_reward"] = original_reward - 0.1 * normalized_token_counts[i]         
 
         for traj in trajectories:
             prompt_tokens = traj["prompt_tokens"]

@@ -6,12 +6,11 @@ import threading
   
 class SWEGrepEnvironment(ToolEnvironment):  
     def _execute_tool_calls(self, tool_calls):  
-        repo_path = self.task.get("repo_path", None) if self.task else None 
-          
+        repo_path = self.task.get("repo_path", None) if self.task else None
         tool_outputs = {}  
         output_queue = queue.Queue()  
         threads = []  
-  
+
         def execute_tool(tool_call):  
             tool_name = tool_call["function"]["name"]  
             tool_args = json.loads(tool_call["function"]["arguments"])  
@@ -36,7 +35,7 @@ class SWEGrepEnvironment(ToolEnvironment):
             tool_outputs[tool_call_id] = output_str  
   
         return tool_outputs
-    
+
     @staticmethod  
     def from_dict(env_args: dict) -> "SWEGrepEnvironment":  
         tools = env_args.pop("tools", None)  
@@ -44,10 +43,15 @@ class SWEGrepEnvironment(ToolEnvironment):
         reward_fn = env_args.pop("reward_fn", None)  
         max_steps = env_args.pop("max_steps", 30)  
         
+        if "extra_info" in env_args and "data_source" in env_args:  
+            task = env_args["extra_info"]   
+        else:  
+            task = env_args 
+        
         return SWEGrepEnvironment(  
-            task=env_args,   
-            tools=tools,   
-            tool_map=tool_map,   
-            max_steps=max_steps,   
+            task=task,  
+            tools=tools,  
+            tool_map=tool_map,  
+            max_steps=max_steps,  
             reward_fn=reward_fn  
         )
