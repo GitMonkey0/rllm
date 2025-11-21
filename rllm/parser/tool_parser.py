@@ -238,7 +238,17 @@ class QwenToolParser(ToolParser):
             try:
                 call_data = json.loads(json_content)
                 # Convert to common format matching parse_tool_calls output
-                tool_calls.append({"name": call_data["name"], "arguments": call_data["arguments"]})
+                #tool_calls.append({"name": call_data["name"], "arguments": call_data["arguments"]})
+                name = call_data.get("name")
+                arguments = call_data.get("arguments")
+                if name is None or arguments is None:
+                    print(
+                        "Error parsing tool call: missing 'name' or 'arguments'. "
+                        f"raw json_content={json_content!r}, parsed={call_data!r}"
+                    )
+                    text = text[end + len(self.tool_call_end):]
+                    continue
+                tool_calls.append({"name": name, "arguments": arguments})
             except json.JSONDecodeError:
                 print(f"Error parsing tool call: {json_content}")
                 text = text[end + len(self.tool_call_end) :]
