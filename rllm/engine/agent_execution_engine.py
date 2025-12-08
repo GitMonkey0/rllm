@@ -208,9 +208,55 @@ class AgentExecutionEngine:
         prompt_tokens, _ = convert_messages_to_tokens_and_masks(messages, tokenizer=self.tokenizer, parser=self.chat_parser, contains_first_msg=True, contains_generation_msg=True)
         prompt_token_len = len(prompt_tokens)
         # Note, this should never happen!
-        if prompt_token_len > self.max_prompt_length:
-            agent.reset()
-            raise Exception(f"Trajectory {idx}: initial prompt length {prompt_token_len} already exceeded max_prompt_length {self.max_prompt_length}, retrying")
+        # if prompt_token_len > self.max_prompt_length:
+        #     agent.reset()
+        #     raise Exception(f"Trajectory {idx}: initial prompt length {prompt_token_len} already exceeded max_prompt_length {self.max_prompt_length}, retrying")
+        if prompt_token_len > self.max_prompt_length:  
+            # Find the first user message  
+            user_msg_idx = None  
+            for idx, msg in enumerate(messages):  
+                if msg.get("role") == "user":  
+                    user_msg_idx = idx  
+                    break  
+            
+            if user_msg_idx is not None:  
+                # Calculate excess tokens  
+                excess_tokens = prompt_token_len - self.max_prompt_length  
+                
+                # Get user message content and encode  
+                user_content = messages[user_msg_idx]["content"]  
+                user_tokens = self.tokenizer.encode(user_content, add_special_tokens=False)  
+                
+                # Truncate from the end, keeping the beginning  
+                if len(user_tokens) > excess_tokens:  
+                    # Keep extra margin for formatting overhead  
+                    truncated_tokens = user_tokens[:len(user_tokens) - excess_tokens - 100]  
+                    truncated_content = self.tokenizer.decode(truncated_tokens, skip_special_tokens=True)  
+                    
+                    # Update the local messages  
+                    messages[user_msg_idx]["content"] = truncated_content  
+                    
+                    # IMPORTANT: Update agent's internal messages  
+                    agent.messages = messages  
+                    
+                    # Recalculate token length  
+                    prompt_tokens, _ = convert_messages_to_tokens_and_masks(  
+                        messages,   
+                        tokenizer=self.tokenizer,   
+                        parser=self.chat_parser,   
+                        contains_first_msg=True,   
+                        contains_generation_msg=True  
+                    )  
+                    prompt_token_len = len(prompt_tokens)  
+                    
+                    logger.info(f"Trajectory {idx}: Truncated user prompt from {prompt_token_len + excess_tokens} to {prompt_token_len} tokens")  
+                else:  
+                    # User message too short to truncate  
+                    agent.reset()  
+                    raise Exception(f"Trajectory {idx}: Cannot truncate - user message too short")  
+            else:  
+                agent.reset()  
+                raise Exception(f"Trajectory {idx}: No user message found to truncate")
 
         for step_idx in range(self.max_steps):
             # Get action from agent
